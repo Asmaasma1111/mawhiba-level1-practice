@@ -71,9 +71,37 @@
   /* ================= التحميل ================= */
   function boot() {
     Data.load().then(function (ok) {
-      if (ok) { renderHome(); show('view-home'); }
+      if (ok) { renderHome(); show('view-home'); autoSync(); }
       else { show('view-loader'); }
     });
+  }
+
+  /* مزامنة صامتة: لا تعطّل شيئاً، ولا تعمل أثناء الاختبار حتى لا يتأثّر المؤقّت */
+  function autoSync() {
+    var Sync = MW.Sync;
+    if (!Sync || !Sync.configured() || !Sync.getCode()) { renderSyncStatus(null); return; }
+    renderSyncStatus('working');
+    Sync.quietRun().then(function (r) {
+      renderSyncStatus(r && !r.failed && !r.skipped ? r : 'failed');
+      if (r && r.pulled) renderHome();
+    });
+  }
+
+  function renderSyncStatus(state) {
+    var line = $('#sync-status');
+    if (!line) return;
+    var Sync = MW.Sync;
+    if (!Sync || !Sync.configured() || !Sync.getCode()) { line.hidden = true; return; }
+    line.hidden = false;
+    if (state === 'working') { line.textContent = 'جاري المزامنة…'; return; }
+    if (state === 'failed') {
+      line.textContent = 'تعذّرت المزامنة الآن — التقدّم محفوظ على الجهاز وسنحاول لاحقاً.';
+      return;
+    }
+    var last = Sync.lastSync();
+    line.textContent = last
+      ? 'آخر مزامنة: ' + MW.dateText(last)
+      : 'المزامنة مفعّلة على هذا الجهاز.';
   }
 
   function wireLoader() {
@@ -396,6 +424,8 @@
     lastResult = r;
     renderResults(r);
     show('view-results');
+    /* بعد انتهاء الاختبار فقط — لا شيء يجري أثناء الأقسام المؤقّتة */
+    if (MW.Sync) MW.Sync.quietRun();
   }
 
   function renderResults(r) {

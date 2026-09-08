@@ -68,7 +68,8 @@
         <button class="btn ghost sm" id="reload-data">إعادة تحميل ملف الأسئلة</button>
         <button class="btn danger sm" id="reset-btn">مسح كل البيانات المحفوظة</button>
       </div>
-      <p class="subtle">تُحفظ المحاولات في هذا المتصفّح فقط، ولا تُرسل إلى أيّ مكان.</p>
+      <p class="subtle" id="storage-note">تُحفظ المحاولات في هذا المتصفّح، ويمكن مزامنتها مع أجهزة أخرى من لوحة وليّ الأمر.</p>
+      <p class="subtle sync-line" id="sync-status" hidden></p>
     </section>
   </div>
 </section>
@@ -202,8 +203,10 @@
 
 <div id="toast" class="toast" role="status" hidden></div>
 
+<script src="sync-config.js"></script>
 <script src="data.js"></script>
 <script src="shapes.js"></script>
+<script src="sync.js"></script>
 <script src="engine.js"></script>
 <script src="app.js"></script>
 <script>

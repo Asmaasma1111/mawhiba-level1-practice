@@ -32,6 +32,53 @@
 
     <p class="subtle" id="empty" hidden>لا توجد محاولات مسجّلة بعد.</p>
 
+    <section class="panel sync" id="sync-panel">
+      <h2>المزامنة بين الأجهزة</h2>
+
+      <div id="sync-off" hidden>
+        <p>المزامنة غير مُفعّلة في هذه النسخة. التقدّم محفوظ على هذا الجهاز فقط.</p>
+        <p class="subtle">لتفعيلها: أنشئي مشروع Supabase مجّانياً، شغّلي ملف
+          <code>supabase/sync-setup.sql</code>، ثم ضعي العنوان والمفتاح العلني في
+          <code>sync-config.js</code>.</p>
+      </div>
+
+      <div id="sync-on" hidden>
+        <div id="sync-nocode" hidden>
+          <p>لا يوجد رمز مزامنة على هذا الجهاز بعد.</p>
+          <div class="row-btns">
+            <button class="btn primary sm" id="sync-new">أنشئي رمزاً جديداً</button>
+            <button class="btn ghost sm" id="sync-join">عندي رمز من جهاز آخر</button>
+          </div>
+        </div>
+
+        <div id="sync-hascode" hidden>
+          <p class="subtle">أدخلي هذا الرمز في الجهاز الآخر لتظهر عليه المحاولات نفسها.
+             احتفظي به: من يعرفه يرى نتائج ابنتك.</p>
+          <div class="codebox"><code class="synccode" id="sync-code" dir="ltr"></code></div>
+          <p class="subtle" id="sync-last"></p>
+          <div class="row-btns">
+            <button class="btn primary sm" id="sync-now">زامني الآن</button>
+            <button class="btn ghost sm" id="sync-change">استعملي رمزاً آخر</button>
+            <button class="btn danger sm" id="sync-off-btn">أوقفي المزامنة هنا</button>
+          </div>
+        </div>
+
+        <div id="sync-enter" hidden>
+          <label class="field">
+            <span>رمز المزامنة من الجهاز الآخر</span>
+            <input type="text" id="sync-input" dir="ltr" autocapitalize="characters"
+                   autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX">
+          </label>
+          <div class="row-btns">
+            <button class="btn primary sm" id="sync-save">احفظي وزامني</button>
+            <button class="btn ghost sm" id="sync-cancel">إلغاء</button>
+          </div>
+        </div>
+
+        <p class="sync-msg" id="sync-msg" hidden></p>
+      </div>
+    </section>
+
     <div id="content" hidden>
       <h1>متابعة الأداء</h1>
       <div class="stats" id="summary"></div>
@@ -61,8 +108,10 @@
   </div>
 </main>
 
+<script src="sync-config.js"></script>
 <script src="data.js"></script>
 <script src="shapes.js"></script>
+<script src="sync.js"></script>
 <script src="engine.js"></script>
 <script src="parent.js"></script>
 <script>

@@ -13,14 +13,106 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    wireSync();
     Data.load().then(function (ok) {
       if (!ok) {
         $('#need-data').hidden = false;
         return;
       }
       render();
+      runSync(true);
     });
   });
+
+  /* ---------- المزامنة ---------- */
+  var Sync = MW.Sync;
+
+  function syncMsg(text, cls) {
+    var m = $('#sync-msg');
+    if (!text) { m.hidden = true; return; }
+    m.hidden = false;
+    m.textContent = text;
+    m.className = 'sync-msg ' + (cls || '');
+  }
+
+  function paintSync() {
+    var configured = Sync && Sync.configured();
+    $('#sync-off').hidden = !!configured;
+    $('#sync-on').hidden = !configured;
+    if (!configured) return;
+
+    var code = Sync.getCode();
+    $('#sync-nocode').hidden = !!code;
+    $('#sync-hascode').hidden = !code;
+    if (code) {
+      $('#sync-code').textContent = Sync.pretty(code);
+      var last = Sync.lastSync();
+      $('#sync-last').textContent = last
+        ? 'آخر مزامنة: ' + MW.dateText(last)
+        : 'لم تتم مزامنة بعد على هذا الجهاز.';
+    }
+  }
+
+  function showEnter(on) {
+    $('#sync-enter').hidden = !on;
+    $('#sync-nocode').hidden = on || !!Sync.getCode();
+    $('#sync-hascode').hidden = on || !Sync.getCode();
+  }
+
+  function runSync(quiet) {
+    if (!Sync || !Sync.configured() || !Sync.getCode()) { paintSync(); return; }
+    if (!quiet) syncMsg('جاري المزامنة…', 'working');
+    Sync.run().then(function (r) {
+      paintSync();
+      if (r && (r.pulled || r.pushed)) {
+        syncMsg('تمت المزامنة: وصلت ' + arD(r.pulled || 0) + ' محاولة، وأُرسلت ' +
+                arD(r.pushed || 0) + '.', 'good');
+        render();
+      } else if (!quiet) {
+        syncMsg('كل شيء متطابق بالفعل.', 'good');
+      }
+    }).catch(function (e) {
+      paintSync();
+      syncMsg('تعذّرت المزامنة: ' + e.message +
+              ' — التقدّم محفوظ على هذا الجهاز ولم يُفقد شيء.', 'bad');
+    });
+  }
+
+  function wireSync() {
+    paintSync();
+    if (!Sync || !Sync.configured()) return;
+
+    $('#sync-new').onclick = function () {
+      Sync.setCode(Sync.generateCode());
+      paintSync();
+      syncMsg('أُنشئ رمز جديد. أدخليه في الجهاز الآخر.', 'good');
+      runSync(true);
+    };
+    $('#sync-join').onclick = function () { syncMsg(''); showEnter(true); };
+    $('#sync-change').onclick = function () { syncMsg(''); showEnter(true); };
+    $('#sync-cancel').onclick = function () { showEnter(false); paintSync(); };
+
+    $('#sync-save').onclick = function () {
+      try {
+        Sync.setCode($('#sync-input').value);
+      } catch (e) { syncMsg(e.message, 'bad'); return; }
+      showEnter(false);
+      paintSync();
+      runSync(false);
+    };
+    $('#sync-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') $('#sync-save').click();
+    });
+
+    $('#sync-now').onclick = function () { runSync(false); };
+
+    $('#sync-off-btn').onclick = function () {
+      if (!confirm('إيقاف المزامنة على هذا الجهاز؟ المحاولات المحفوظة هنا لن تُمسح.')) return;
+      Sync.clearCode();
+      paintSync();
+      syncMsg('أُوقفت المزامنة على هذا الجهاز.', '');
+    };
+  }
 
   function render() {
     var attempts = Store.getAttempts().slice().sort(function (a, b) {

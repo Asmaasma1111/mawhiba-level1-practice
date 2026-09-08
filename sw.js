@@ -1,10 +1,11 @@
 /* sw.js — تخزين مؤقّت بسيط ليعمل التطبيق بلا إنترنت بعد أول فتح.
    يُسجَّل فقط عند التشغيل عبر https (مثل GitHub Pages)، ويُتجاهَل عند الفتح من القرص. */
 
-var CACHE = 'mawhiba-v1';
+var CACHE = 'mawhiba-v2';
 var ASSETS = [
   './', 'index.html', 'parent.html', 'styles.css',
   'data.js', 'shapes.js', 'engine.js', 'app.js', 'parent.js',
+  'sync.js', 'sync-config.js',
   'exams.json',
   'fonts/Tajawal-Regular-arabic.woff2', 'fonts/Tajawal-Regular-latin.woff2',
   'fonts/Tajawal-Bold-arabic.woff2', 'fonts/Tajawal-Bold-latin.woff2'
@@ -24,9 +25,30 @@ self.addEventListener('activate', function (e) {
   }).then(function () { return self.clients.claim(); }));
 });
 
-/* من الذاكرة أولاً حتى يعمل بلا شبكة، مع تحديث النسخة في الخلفية */
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
+
+  /* لا نتدخّل في نداءات المزامنة إطلاقاً */
+  var url = new URL(e.request.url);
+  if (url.origin !== self.location.origin) return;
+
+  /* الصفحات: من الشبكة أولاً حتى يصل أيّ تحديث فوراً، ومن الذاكرة عند انقطاعها */
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request).then(function (res) {
+        var copy = res.clone();
+        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+        return res;
+      }).catch(function () {
+        return caches.match(e.request).then(function (hit) {
+          return hit || caches.match('index.html');
+        });
+      })
+    );
+    return;
+  }
+
+  /* الملفات: من الذاكرة أولاً حتى يعمل بلا شبكة، مع تحديث النسخة في الخلفية */
   e.respondWith(
     caches.match(e.request).then(function (hit) {
       var net = fetch(e.request).then(function (res) {

@@ -417,3 +417,27 @@ details > summary { cursor: pointer; color: var(--navy); font-size: 16px; paddin
 }
 /* آيباد أفقي: مساحة أوسع قليلاً للأشكال */
 @media (min-width: 1024px) { .options.shapes .opt { min-height: 168px; } }
+
+/* ---------- المزامنة ---------- */
+.panel.sync { border-color: var(--navy-line); }
+.codebox { margin: 14px 0; }
+.synccode {
+  display: inline-block; background: var(--navy-soft); color: var(--navy);
+  border: 1px solid var(--navy-line); border-radius: 10px;
+  padding: 12px 22px; font-size: 26px; font-weight: 700; letter-spacing: 3px;
+  font-family: ui-monospace, Menlo, Consolas, monospace; user-select: all;
+}
+.field { display: block; margin: 14px 0; }
+.field span { display: block; font-size: 16px; color: var(--ink-2); margin-bottom: 6px; }
+.field input {
+  font: inherit; font-size: 22px; letter-spacing: 2px; width: 100%; max-width: 340px;
+  padding: 10px 14px; border: 2px solid var(--navy-line); border-radius: 10px;
+  background: #fff; color: var(--ink);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+}
+.field input:focus { outline: none; border-color: var(--navy); }
+.sync-msg { margin-top: 14px; font-size: 17px; }
+.sync-msg.good { color: var(--good); }
+.sync-msg.bad { color: var(--bad); }
+.sync-msg.working { color: var(--ink-2); }
+.sync-line { margin-top: 6px; }

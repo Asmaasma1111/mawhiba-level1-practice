@@ -55,6 +55,22 @@
       writeJSON(ATTEMPTS_KEY, list);
       return list;
     },
+    /* دمج محاولات واردة من جهاز آخر. المحاولة لا تتغيّر بعد انتهائها،
+       فالدمج بالمعرّف كافٍ ولا ينشأ عنه تعارض. */
+    mergeAttempts: function (incoming) {
+      var list = Store.getAttempts();
+      var seen = {};
+      list.forEach(function (a) { seen[a.id] = true; });
+      var added = 0;
+      (incoming || []).forEach(function (a) {
+        if (a && a.id && !seen[a.id]) { list.push(a); seen[a.id] = true; added++; }
+      });
+      if (added) {
+        list.sort(function (x, y) { return new Date(x.finishedAt) - new Date(y.finishedAt); });
+        writeJSON(ATTEMPTS_KEY, list);
+      }
+      return added;
+    },
     getSession: function () { return readJSON(SESSION_KEY, null); },
     setSession: function (s) { writeJSON(SESSION_KEY, s); },
     clearSession: function () { try { localStorage.removeItem(SESSION_KEY); } catch (e) {} },

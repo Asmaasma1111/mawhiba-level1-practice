@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تدريب مقياس موهبة — المستوى الأول</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="تدريب موهبة">
+<meta name="theme-color" content="#10305e">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark" aria-hidden="true"></span>
+    <span>تدريب مقياس موهبة للقدرات العقلية المتعددة — المستوى الأول</span>
+  </div>
+  <nav class="topnav">
+    <a class="btn ghost sm" href="parent.html">لوحة وليّ الأمر</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ تحميل الملف ============ -->
+<section class="view" id="view-loader" hidden>
+  <div class="wrap narrow">
+    <h1>تحميل ملف الأسئلة</h1>
+    <p>المتصفّح لا يسمح بقراءة <code>exams.json</code> تلقائياً عند فتح الصفحة من القرص مباشرة.
+       اختاري الملف مرة واحدة فقط، وسيُحفظ في هذا المتصفّح للمرّات القادمة.</p>
+    <div id="drop" class="drop">
+      <p>اسحبي ملف <b>exams.json</b> إلى هنا</p>
+      <p class="or">أو</p>
+      <label class="btn primary file">
+        اختاري الملف
+        <input type="file" id="file-input" accept=".json,application/json" hidden>
+      </label>
+    </div>
+    <p class="err" id="load-error" hidden></p>
+  </div>
+</section>
+
+<!-- ============ الرئيسية ============ -->
+<section class="view" id="view-home" hidden>
+  <div class="wrap">
+    <h1>اختاري نموذجاً للتدريب</h1>
+
+    <div class="banner" id="resume-banner" hidden>
+      <p class="txt"></p>
+      <div class="banner-actions">
+        <button class="btn primary sm" data-resume>أكملي المحاولة</button>
+        <button class="btn ghost sm" data-discard>احذفيها</button>
+      </div>
+    </div>
+
+    <div class="grid" id="exam-list"></div>
+
+    <section class="panel">
+      <h2>المحاولات السابقة</h2>
+      <div id="history"></div>
+    </section>
+
+    <section class="panel quiet">
+      <h2>إعدادات</h2>
+      <div class="row-btns">
+        <button class="btn ghost sm" id="reload-data">إعادة تحميل ملف الأسئلة</button>
+        <button class="btn danger sm" id="reset-btn">مسح كل البيانات المحفوظة</button>
+      </div>
+      <p class="subtle">تُحفظ المحاولات في هذا المتصفّح فقط، ولا تُرسل إلى أيّ مكان.</p>
+    </section>
+  </div>
+</section>
+
+<!-- ============ التعليمات ============ -->
+<section class="view" id="view-instructions" hidden>
+  <div class="wrap narrow">
+    <h1 id="instr-title"></h1>
+
+    <div class="rulecard">
+      <h2>القاعدة الأهم</h2>
+      <p class="big">الاختبار مقسّم إلى أقسام. لكل قسم وقته الخاص.</p>
+      <p class="big">حين ينتهي وقت القسم يُغلق فوراً، وتنتقلين إلى القسم التالي.
+         <b>لا يمكنك الرجوع إليه أبداً.</b></p>
+      <p class="big">أيّ سؤال تتركينه بلا إجابة عند انتهاء الوقت يُحسب صفراً.</p>
+    </div>
+
+    <h2>قبل أن تبدئي</h2>
+    <ul class="facts" id="instr-facts"></ul>
+    <ul class="rules">
+      <li>داخل القسم الواحد تنتقلين بحرّية بين الأسئلة، للأمام وللخلف.</li>
+      <li>يمكنك وضع علامة «للمراجعة» على أيّ سؤال والعودة إليه ما دام وقت القسم لم ينتهِ.</li>
+      <li>لكل سؤال إجابة واحدة صحيحة من أربع.</li>
+      <li>في آخر دقيقة من القسم يتغيّر لون المؤقّت تنبيهاً هادئاً.</li>
+      <li>إن أنهيتِ القسم مبكّراً اضغطي «أغلقي القسم»، وسيُطلب منك تأكيد واحد.</li>
+    </ul>
+
+    <div class="row-btns end">
+      <button class="btn ghost" id="instr-back">رجوع</button>
+      <button class="btn primary" id="to-warmup">تدريب على الواجهة أولاً</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ التهيئة ============ -->
+<section class="view" id="view-warmup" hidden>
+  <div class="wrap narrow">
+    <div class="warm-head">
+      <h1>تدريب على الواجهة</h1>
+      <p class="subtle">هذان سؤالان للتعرّف على الشاشة فقط. لا وقت ولا درجة.</p>
+    </div>
+    <div id="warm-body"></div>
+    <div class="row-btns end">
+      <button class="btn ghost" id="warm-back">رجوع للتعليمات</button>
+      <button class="btn ghost" id="warm-next">التالي</button>
+      <button class="btn primary" id="warm-start" hidden>ابدئي الاختبار الآن</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ الاختبار ============ -->
+<section class="view" id="view-test" hidden>
+  <div class="testbar">
+    <div class="tb-block">
+      <div class="tb-title" id="block-title"></div>
+      <div class="tb-sub" id="block-count"></div>
+    </div>
+    <div class="tb-q" id="q-count"></div>
+    <div class="tb-timer">
+      <div class="timer-face">
+        <span class="timer-label">الوقت المتبقّي للقسم</span>
+        <span class="timer" id="timer" dir="ltr">٠٠:٠٠</span>
+      </div>
+      <div class="timer-track"><span id="timer-bar"></span></div>
+    </div>
+  </div>
+
+  <div class="stripbar">
+    <div class="strip" id="strip"></div>
+    <div class="strip-summary" id="strip-summary"></div>
+  </div>
+
+  <div class="wrap test">
+    <p class="block-instructions" id="block-instructions"></p>
+    <div id="q-body"></div>
+
+    <div class="testnav">
+      <button class="btn ghost" id="prev-btn">السابق</button>
+      <button class="btn flag" id="flag-btn" aria-pressed="false">
+        <span class="fi" aria-hidden="true">⚑</span><span class="t">علّمي للمراجعة</span>
+      </button>
+      <button class="btn ghost" id="next-btn">التالي</button>
+      <span class="spacer"></span>
+      <button class="btn primary" id="end-block-btn">أغلقي القسم وانتقلي</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ النتائج ============ -->
+<section class="view" id="view-results" hidden>
+  <div class="wrap">
+    <h1>النتيجة</h1>
+    <p class="subtle" id="res-exam"></p>
+
+    <div class="res-top">
+      <div class="score-card">
+        <div class="score" id="res-score">٠</div>
+        <div class="score-of" id="res-total"></div>
+        <div class="score-cap">الدرجة الكلّية</div>
+      </div>
+      <div class="gap-card">
+        <div class="gap-num" id="res-unanswered">٠</div>
+        <div class="gap-cap">سؤالاً بقي بلا إجابة</div>
+        <p class="gap-note" id="res-timedout"></p>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h2>المجالات الأربعة</h2>
+      <div id="res-domains" class="domains"></div>
+    </section>
+
+    <section class="panel">
+      <h2>تفصيل الأقسام</h2>
+      <div id="res-blocks"></div>
+    </section>
+
+    <div class="row-btns">
+      <button class="btn ghost" id="res-toggle-review">إظهار مراجعة الأسئلة</button>
+      <button class="btn primary" id="res-home">العودة للرئيسية</button>
+    </div>
+
+    <section class="panel" id="res-review-wrap" hidden>
+      <h2>مراجعة كل سؤال</h2>
+      <div id="res-review"></div>
+    </section>
+  </div>
+</section>
+
+</main>
+
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script src="data.js"></script>
+<script src="shapes.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+<script>
+/* تسجيل خدمة العمل بلا إنترنت — تعمل عبر https فقط، وتُتجاهَل بهدوء عند الفتح من القرص */
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

@@ -175,6 +175,9 @@
   function stimulus(st, cls) {
     if (!st) return '';
     var extra = cls ? ' ' + cls : '';
+    if (st.kind === 'diagram') {
+      return (global.MW.Diagrams ? global.MW.Diagrams.render(st, cls) : '');
+    }
     if (st.kind === 'matrix' && Array.isArray(st.rows)) {
       var cols = st.rows.reduce(function (m, r) { return Math.max(m, r.length); }, 0);
       var html = '<div class="stim matrix' + extra + '" style="--cols:' + cols + '">';

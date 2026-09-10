@@ -54,6 +54,25 @@
     }
   }
 
+  /* تعبئات نمطية (مخطّط، منقّط، مظلّل) — تتكرّر كثيراً في أسئلة المصفوفات الحقيقية */
+  function patternDefs(kind, id) {
+    if (kind === 'striped') {
+      return tag('pattern', { id: id, width: 9, height: 9, patternUnits: 'userSpaceOnUse' },
+        tag('rect', { width: 9, height: 9, fill: '#fff' }) +
+        tag('line', { x1: 2.5, y1: 0, x2: 2.5, y2: 9, stroke: 'var(--ink)', 'stroke-width': 3.4 }));
+    }
+    if (kind === 'hatched') {
+      return tag('pattern', { id: id, width: 10, height: 10, patternUnits: 'userSpaceOnUse',
+                              patternTransform: 'rotate(45)' },
+        tag('rect', { width: 10, height: 10, fill: '#fff' }) +
+        tag('line', { x1: 3, y1: 0, x2: 3, y2: 10, stroke: 'var(--ink)', 'stroke-width': 3 }));
+    }
+    /* dotted */
+    return tag('pattern', { id: id, width: 9, height: 9, patternUnits: 'userSpaceOnUse' },
+      tag('rect', { width: 9, height: 9, fill: '#fff' }) +
+      tag('circle', { cx: 4.5, cy: 4.5, r: 2, fill: 'var(--ink)' }));
+  }
+
   function tag(name, attrs, inner) {
     var s = '<' + name;
     for (var k in attrs) {
@@ -133,7 +152,12 @@
 
     if (g) {
       var fill = item.fill || 'empty';
-      if (fill === 'solid') {
+      if (fill === 'striped' || fill === 'dotted' || fill === 'hatched') {
+        var pid = 'pat' + (++uid);
+        out += patternDefs(fill, pid);
+        out += el(g, { fill: 'url(#' + pid + ')', stroke: 'var(--ink)', 'stroke-width': 4,
+                       'stroke-linejoin': 'round' });
+      } else if (fill === 'solid') {
         out += el(g, { fill: 'var(--ink)', stroke: 'var(--ink)', 'stroke-width': 3,
                        'stroke-linejoin': 'round' });
       } else if (fill === 'half') {
@@ -150,6 +174,15 @@
 
     if (typeof item.dots === 'number') {
       out += dotsSVG(item.dots, g ? 0.55 : 1);
+    }
+
+    /* نقطة علامة تدور مع الشكل — نمط شائع في مصفوفات الدوران */
+    if (typeof item.markerAngle === 'number') {
+      var mr = (item.markerRadius || 0.62) * 34;
+      var ma = (item.markerAngle - 90) * Math.PI / 180;
+      out += tag('circle', { cx: (C + mr * Math.cos(ma)).toFixed(2),
+                             cy: (C + mr * Math.sin(ma)).toFixed(2),
+                             r: 6, fill: 'var(--ink)' });
     }
 
     if (!g && typeof item.dots !== 'number') {
@@ -196,5 +229,5 @@
     return h + '</div>';
   }
 
-  global.MW.Shapes = { svg: svg, stimulus: stimulus, dotGrid: dotGrid };
+  global.MW.Shapes = { svg: svg, stimulus: stimulus, dotGrid: dotGrid, inner: itemInner };
 })(window);

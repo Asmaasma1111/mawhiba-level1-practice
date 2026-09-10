@@ -439,6 +439,110 @@
     return g;
   };
 
+  /* ---------- معادلات الأشكال: ▲+▲+▲ = ■ ---------- */
+  D.shapeEquation = function (o) {
+    var rows = o.rows || [];
+    var g = '', y = 34, rowH = o.rowH || 46;
+    var Shapes = global.MW.Shapes;
+    function glyph(it, x, yy, sz) {
+      sz = sz || 26;
+      if (typeof it === 'string' || typeof it === 'number') {
+        return label(x, yy + 8, String(it), 24);
+      }
+      return t('g', { transform: 'translate(' + (x - sz / 2) + ' ' + (yy - sz / 2) +
+                                 ') scale(' + (sz / 100) + ')' }, Shapes.svg ? '' : '') +
+             t('svg', { x: x - sz / 2, y: yy - sz / 2, width: sz, height: sz,
+                        viewBox: '0 0 100 100', overflow: 'visible' },
+               Shapes.inner ? Shapes.inner(it) : '');
+    }
+    rows.forEach(function (row) {
+      /* من اليمين إلى اليسار */
+      var x = 292;
+      row.left.forEach(function (it, i) {
+        if (i) { g += label(x - 8, y + 8, '+', 22, GUIDE); x -= 24; }
+        g += glyph(it, x - 16, y); x -= 40;
+      });
+      g += label(x - 4, y + 8, '=', 22, INK); x -= 30;
+      g += glyph(row.right, x - 16, y);
+      y += rowH;
+    });
+    if (o.ask) g += label(160, y + 12, o.ask, 15, GUIDE);
+    return g;
+  };
+
+  /* ---------- عجلة أعداد مقسّمة إلى قطاعات ---------- */
+  D.numberWheel = function (o) {
+    var vals = o.values || [];
+    var n = vals.length, cx = 160, cy = 92, r = 66;
+    var g = t('circle', { cx: cx, cy: cy, r: r, fill: '#fff', stroke: INK, 'stroke-width': 3 });
+    for (var i = 0; i < n; i++) {
+      var a = (i * 360 / n - 90) * Math.PI / 180;
+      g += line(cx, cy, cx + r * Math.cos(a), cy + r * Math.sin(a), 2.5);
+    }
+    vals.forEach(function (v, i) {
+      var a = ((i + 0.5) * 360 / n - 90) * Math.PI / 180;
+      var x = cx + r * 0.6 * Math.cos(a), yy = cy + r * 0.6 * Math.sin(a) + 8;
+      g += label(x, yy, String(v), 22, v === '?' ? GUIDE : INK);
+    });
+    return g;
+  };
+
+  /* ---------- تروس بعدد أسنان معلوم (نِسَب الدوران) ---------- */
+  D.gearRatio = function (o) {
+    var gs = o.gears || [];
+    var g = '', x = 268;
+    gs.forEach(function (gr, i) {
+      var r = 20 + gr.teeth * 1.6;
+      if (i) x -= r + 6;
+      var teeth = Math.min(24, gr.teeth);
+      for (var k = 0; k < teeth; k++) {
+        var a = k * 360 / teeth;
+        var rad = a * Math.PI / 180;
+        g += t('rect', { x: -3.5, y: -5, width: 7, height: 10, rx: 1.5, fill: SOFT,
+                         stroke: INK, 'stroke-width': 2,
+                         transform: 'translate(' + (x + Math.cos(rad) * r * 0.9).toFixed(1) + ' ' +
+                                    (92 + Math.sin(rad) * r * 0.9).toFixed(1) + ') rotate(' + a + ')' });
+      }
+      g += t('circle', { cx: x, cy: 92, r: r * 0.82, fill: SOFT, stroke: INK, 'stroke-width': 3 });
+      g += label(x, 90, String(gr.teeth), 15, INK);
+      g += label(x, 106, 'سنّاً', 11, GUIDE);
+      if (gr.mark) g += t('circle', { cx: x, cy: 92 - r * 0.55, r: 5, fill: '#fff',
+                                      stroke: INK, 'stroke-width': 2.5 });
+      if (gr.label) g += label(x, 92 + r + 20, gr.label, 13, GUIDE);
+      x -= r + 6;
+    });
+    return g;
+  };
+
+  /* ---------- حالات المادة داخل إناء ---------- */
+  D.matterStates = function (o) {
+    var states = o.states || ['solid', 'liquid', 'gas'];
+    var g = '', x = 262, w = 62, h = 74;
+    states.forEach(function (st) {
+      g += t('path', { d: 'M' + (x - w / 2) + ' 30 L' + (x - w / 2) + ' ' + (30 + h) +
+                          ' L' + (x + w / 2) + ' ' + (30 + h) + ' L' + (x + w / 2) + ' 30',
+                       fill: 'none', stroke: INK, 'stroke-width': 3, 'stroke-linejoin': 'round' });
+      var conf = { solid: { cols: 5, rows: 5, top: 60, jit: 0 },
+                   liquid: { cols: 4, rows: 3, top: 66, jit: 3 },
+                   gas: { cols: 3, rows: 4, top: 34, jit: 7 } }[st] || { cols: 4, rows: 3, top: 60, jit: 2 };
+      var seed = 1;
+      function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280 - 0.5; }
+      for (var r0 = 0; r0 < conf.rows; r0++) {
+        for (var c0 = 0; c0 < conf.cols; c0++) {
+          var px = x - w / 2 + 10 + c0 * ((w - 20) / Math.max(1, conf.cols - 1)) + rnd() * conf.jit * 2;
+          var py = conf.top + r0 * ((30 + h - 8 - conf.top) / Math.max(1, conf.rows - 1)) + rnd() * conf.jit * 2;
+          /* نُبقي الجزيئات داخل الإناء مهما بلغ التشتيت */
+          px = Math.max(x - w / 2 + 7, Math.min(x + w / 2 - 7, px));
+          py = Math.max(38, Math.min(30 + h - 7, py));
+          g += t('circle', { cx: px.toFixed(1), cy: py.toFixed(1), r: 4, fill: SOFT,
+                             stroke: INK, 'stroke-width': 1.6 });
+        }
+      }
+      x -= w + 26;
+    });
+    return g;
+  };
+
   function render(st, cls) {
     var fn = D[st.draw];
     if (!fn) return '';

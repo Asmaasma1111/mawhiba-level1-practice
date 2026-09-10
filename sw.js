@@ -1,11 +1,11 @@
 /* sw.js — تخزين مؤقّت بسيط ليعمل التطبيق بلا إنترنت بعد أول فتح.
    يُسجَّل فقط عند التشغيل عبر https (مثل GitHub Pages)، ويُتجاهَل عند الفتح من القرص. */
 
-var CACHE = 'mawhiba-v8';
+var CACHE = 'mawhiba-v9';
 var ASSETS = [
-  './', 'index.html', 'parent.html', 'styles.css',
+  './', 'index.html', 'parent.html', 'revise.html', 'styles.css',
   'data.js', 'icons.js', 'shapes.js', 'diagrams.js', 'engine.js', 'app.js', 'parent.js',
-  'sync.js', 'sync-config.js',
+  'sync.js', 'sync-config.js', 'revise.js',
   'exams.json',
   'fonts/Tajawal-Regular-arabic.woff2', 'fonts/Tajawal-Regular-latin.woff2',
   'fonts/Tajawal-Bold-arabic.woff2', 'fonts/Tajawal-Bold-latin.woff2'

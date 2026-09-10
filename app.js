@@ -527,6 +527,16 @@
       });
     };
 
+    /* تحديث الشيفرة: لا نعيد التحميل أثناء اختبار جارٍ مهما كان */
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener('message', function (e) {
+        if (!e.data || e.data.type !== 'sw-updated') return;
+        var inTest = !$('#view-test').hidden;
+        if (inTest) { toast('يوجد تحديث للتطبيق. سيُطبَّق بعد انتهاء الاختبار.', 6000); return; }
+        location.reload();
+      });
+    }
+
     if (speed !== 1) {
       var d = document.createElement('div');
       d.className = 'devbar';

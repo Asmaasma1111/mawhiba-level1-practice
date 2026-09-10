@@ -1,7 +1,7 @@
 /* sw.js — تخزين مؤقّت بسيط ليعمل التطبيق بلا إنترنت بعد أول فتح.
    يُسجَّل فقط عند التشغيل عبر https (مثل GitHub Pages)، ويُتجاهَل عند الفتح من القرص. */
 
-var CACHE = 'mawhiba-v5';
+var CACHE = 'mawhiba-v6';
 var ASSETS = [
   './', 'index.html', 'parent.html', 'styles.css',
   'data.js', 'shapes.js', 'diagrams.js', 'engine.js', 'app.js', 'parent.js',
@@ -22,7 +22,13 @@ self.addEventListener('activate', function (e) {
     return Promise.all(keys.map(function (k) {
       return k === CACHE ? null : caches.delete(k);
     }));
-  }).then(function () { return self.clients.claim(); }));
+  }).then(function () { return self.clients.claim(); })
+    .then(function () { return self.clients.matchAll({ type: 'window' }); })
+    .then(function (clients) {
+      /* الصفحات المفتوحة تكون قد حمّلت النسخة القديمة بالفعل؛ نُعلمها لتقرّر
+         بنفسها متى تُحدِّث — ولا تُحدِّث أبداً أثناء قسم مؤقّت جارٍ. */
+      clients.forEach(function (c) { c.postMessage({ type: 'sw-updated' }); });
+    }));
 });
 
 self.addEventListener('fetch', function (e) {

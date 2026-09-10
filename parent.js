@@ -12,6 +12,12 @@
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
+  if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', function (e) {
+      if (e.data && e.data.type === 'sw-updated') location.reload();
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     /* رابط إعداد قادم من جهاز آخر يُطبَّق قبل أيّ شيء */
     var fromLink = null;

@@ -197,17 +197,18 @@
       var bs = (s.blocks && s.blocks[bi]) || { used: 0, done: true, endedBy: null };
       var bScore = 0, bUnanswered = 0;
       b.questions.forEach(function (q, qi) {
+        var dom = q.domain || b.domain;          /* القسم يخلط المجالات كما في الاختبار الحقيقي */
         var a = (s.answers && s.answers[q.id]) || { c: null, f: false };
         var chose = (a.c === null || a.c === undefined) ? null : a.c;
         var ok = chose !== null && chose === q.answer;
         total++;
         if (ok) { score++; bScore++; }
         if (chose === null) bUnanswered++;
-        if (!byDomain[b.domain]) byDomain[b.domain] = { score: 0, total: 0 };
-        byDomain[b.domain].total++;
-        if (ok) byDomain[b.domain].score++;
+        if (!byDomain[dom]) byDomain[dom] = { score: 0, total: 0 };
+        byDomain[dom].total++;
+        if (ok) byDomain[dom].score++;
         items.push({
-          qid: q.id, blockId: b.id, blockTitle: b.title, domain: b.domain,
+          qid: q.id, blockId: b.id, blockTitle: b.title, domain: dom,
           bi: bi, qi: qi, chose: chose, correct: q.answer, ok: ok, flagged: !!a.f
         });
       });

@@ -293,10 +293,13 @@
     $('#q-count').textContent =
       'السؤال ' + arD(engine.s.qi + 1) + ' من ' + arD(b.questions.length);
 
-    var passage = b.passage
-      ? '<section class="passage"><h3>' + esc(b.passage.title) + '</h3><p>' +
-        esc(b.passage.text) + '</p></section>'
+    /* النصّ والتعليمات قد يخصّان السؤال لا القسم كلّه، لأنّ القسم يخلط الأنماط */
+    var pg = q.passage || b.passage;
+    var passage = pg
+      ? '<section class="passage"><h3>' + esc(pg.title) + '</h3><p>' +
+        esc(pg.text) + '</p></section>'
       : '';
+    $('#block-instructions').textContent = q.instructions || b.instructions || '';
 
     $('#q-body').innerHTML =
       passage +

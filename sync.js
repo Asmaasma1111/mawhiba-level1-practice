@@ -36,10 +36,19 @@
     if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(url)) {
       throw new Error('العنوان يجب أن يكون بالشكل https://xxxx.supabase.co');
     }
-    if (anonKey.length < 30) throw new Error('المفتاح يبدو ناقصاً.');
-    if (/service_role/.test(anonKey)) {
-      throw new Error('هذا مفتاح service_role — لا تستعمليه هنا. المطلوب anon / publishable.');
+    if (/^https?:/i.test(anonKey) || /\.supabase\.(co|in)/i.test(anonKey)) {
+      throw new Error('هذا هو العنوان وليس المفتاح — يبدو أنّ الحقلين تبادلا. ' +
+                      'المفتاح يبدأ بـ sb_publishable_ أو eyJ');
     }
+    if (/service_role/i.test(anonKey) || /^sb_secret_/i.test(anonKey)) {
+      throw new Error('هذا مفتاح سرّي (service_role / secret) — لا تستعمليه هنا. ' +
+                      'المطلوب المفتاح العلني publishable.');
+    }
+    if (!/^sb_publishable_/.test(anonKey) && !/^eyJ/.test(anonKey)) {
+      throw new Error('المفتاح يجب أن يبدأ بـ sb_publishable_ (المشاريع الجديدة) ' +
+                      'أو eyJ (المشاريع الأقدم).');
+    }
+    if (anonKey.length < 30) throw new Error('المفتاح يبدو ناقصاً.');
     try { localStorage.setItem(BACKEND_KEY, JSON.stringify({ url: url, anonKey: anonKey })); }
     catch (e) { throw new Error('تعذّر الحفظ في هذا المتصفّح.'); }
     return true;
@@ -201,8 +210,15 @@
     }
   }
 
+  /* اختبار اتصال حقيقي برمز غير مستعمل: يثبت أنّ المفتاح صالح وأنّ الدالتين مثبّتتان،
+     دون لمس أيّ بيانات. */
+  function testConnection() {
+    return rpc('mawhiba_pull', { p_code: generateCode() }).then(function () { return true; });
+  }
+
   MW.Sync = {
     configured: function () { return !!cfg(); },
+    testConnection: testConnection,
     getBackend: getBackend,
     setBackend: setBackend,
     clearBackend: clearBackend,

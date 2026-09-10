@@ -106,18 +106,25 @@
           m.hidden = false; m.textContent = e.message; m.className = 'sync-msg bad'; return;
         }
         m.hidden = false;
-        m.textContent = 'تم. جارٍ إنشاء رمز مزامنة والتحقّق من الاتصال…';
+        m.textContent = 'جارٍ التحقّق من الاتصال…';
         m.className = 'sync-msg working';
-        Sync.setCode(Sync.generateCode());
-        Sync.run().then(function () {
+        /* لا نُنشئ رمز مزامنة إلا بعد نجاح الاتصال فعلاً، حتى لا يبدو الفشل نجاحاً */
+        Sync.testConnection().then(function () {
+          Sync.setCode(Sync.generateCode());
+          return Sync.run();
+        }).then(function () {
           paintSync();
           wireSync();
           syncMsg('المزامنة تعمل. انسخي رابط إعداد الجهاز الآخر من الزرّ أدناه.', 'good');
         }).catch(function (err) {
+          /* فشل الاتصال يعني إعداداً غير صالح: نتراجع عنه بالكامل */
+          Sync.clearBackend();
+          Sync.clearCode();
           paintSync();
+          wireSync();
           m.hidden = false;
-          m.textContent = 'حُفظ الإعداد لكن الاتصال فشل: ' + err.message +
-                          ' — تأكّدي من تشغيل ملف sync-setup.sql في المشروع.';
+          m.textContent = 'لم ينجح الاتصال، ولم يُحفظ شيء. ' + err.message +
+                          ' — تحقّقي من المفتاح ومن تشغيل sync-setup.sql.';
           m.className = 'sync-msg bad';
         });
       };

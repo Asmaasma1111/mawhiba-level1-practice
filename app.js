@@ -133,7 +133,9 @@
   /* ================= الرئيسية ================= */
   function renderHome() {
     var host = $('#exam-list');
-    host.innerHTML = Data.exams.map(function (ex) {
+    /* مجموعات المراجعة فقط لا تُعرض كنموذج مؤقّت */
+    var timed = Data.exams.filter(function (ex) { return !ex.practiceOnly; });
+    host.innerHTML = timed.map(function (ex) {
       var st = Data.examStats(ex);
       var done = Store.getAttempts().filter(function (a) { return a.examId === ex.id; });
       var best = done.reduce(function (m, a) { return Math.max(m, a.score); }, -1);

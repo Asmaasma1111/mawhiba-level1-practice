@@ -3668,6 +3668,362 @@
           ]
         }
       ]
+    },
+    {
+      "id": "exam-pics",
+      "title": "النموذج المصوّر — تدريب إضافي",
+      "blocks": [
+        {
+          "id": "p1b1",
+          "domain": "verbal",
+          "title": "العلاقات المصوّرة",
+          "seconds": 240,
+          "instructions": "انظري إلى الزوج الأول، ثم اختاري ما يكمل الزوج الثاني.",
+          "questions": [
+            {
+              "id": "p1q1",
+              "type": "figural",
+              "prompt": "اختاري الصورة التي تكمل العلاقة.",
+              "stimulus": {
+                "kind": "row",
+                "items": [
+                  {
+                    "icon": "headphones"
+                  },
+                  {
+                    "icon": "ear"
+                  },
+                  {
+                    "text": "::"
+                  },
+                  {
+                    "icon": "glasses"
+                  },
+                  {
+                    "blank": true
+                  }
+                ]
+              },
+              "optionShapes": [
+                {
+                  "icon": "nose"
+                },
+                {
+                  "icon": "eye"
+                },
+                {
+                  "icon": "hand"
+                },
+                {
+                  "icon": "foot"
+                }
+              ],
+              "answer": 1,
+              "explain": "السمّاعة تُلبس على الأذن، والنظّارة تُلبس على العين."
+            },
+            {
+              "id": "p1q2",
+              "type": "figural",
+              "prompt": "اختاري الصورة التي تكمل العلاقة.",
+              "stimulus": {
+                "kind": "row",
+                "items": [
+                  {
+                    "icon": "hammer"
+                  },
+                  {
+                    "icon": "nail"
+                  },
+                  {
+                    "text": "::"
+                  },
+                  {
+                    "icon": "screwdriver"
+                  },
+                  {
+                    "blank": true
+                  }
+                ]
+              },
+              "optionShapes": [
+                {
+                  "icon": "key"
+                },
+                {
+                  "icon": "saw"
+                },
+                {
+                  "icon": "screw"
+                },
+                {
+                  "icon": "cup"
+                }
+              ],
+              "answer": 2,
+              "explain": "المطرقة أداة المسمار، والمفكّ أداة البرغي."
+            },
+            {
+              "id": "p1q3",
+              "type": "figural",
+              "prompt": "اختاري الصورة التي تكمل العلاقة.",
+              "stimulus": {
+                "kind": "row",
+                "items": [
+                  {
+                    "icon": "shoe"
+                  },
+                  {
+                    "icon": "foot"
+                  },
+                  {
+                    "text": "::"
+                  },
+                  {
+                    "icon": "glove"
+                  },
+                  {
+                    "blank": true
+                  }
+                ]
+              },
+              "optionShapes": [
+                {
+                  "icon": "hand"
+                },
+                {
+                  "icon": "ear"
+                },
+                {
+                  "icon": "eye"
+                },
+                {
+                  "icon": "nose"
+                }
+              ],
+              "answer": 0,
+              "explain": "الحذاء يُلبس في القدم، والقفّاز يُلبس في اليد."
+            },
+            {
+              "id": "p1q4",
+              "type": "figural",
+              "prompt": "اختاري الصورة التي تكمل العلاقة.",
+              "stimulus": {
+                "kind": "row",
+                "items": [
+                  {
+                    "icon": "washer"
+                  },
+                  {
+                    "icon": "shirt"
+                  },
+                  {
+                    "text": "::"
+                  },
+                  {
+                    "icon": "fridge"
+                  },
+                  {
+                    "blank": true
+                  }
+                ]
+              },
+              "optionShapes": [
+                {
+                  "icon": "book"
+                },
+                {
+                  "icon": "lock"
+                },
+                {
+                  "icon": "apple"
+                },
+                {
+                  "icon": "key"
+                }
+              ],
+              "answer": 2,
+              "explain": "الغسّالة نضع فيها الملابس، والثلّاجة نضع فيها الطعام."
+            }
+          ]
+        },
+        {
+          "id": "p1b2",
+          "domain": "flex",
+          "title": "التصنيف المصوّر",
+          "seconds": 300,
+          "instructions": "ثلاث صور يجمعها شيء واحد، وواحدة تختلف عنها.",
+          "questions": [
+            {
+              "id": "p1q5",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "cat"
+                },
+                {
+                  "icon": "dog"
+                },
+                {
+                  "icon": "fish"
+                },
+                {
+                  "icon": "lion"
+                }
+              ],
+              "answer": 2,
+              "explain": "الباقي يعيش على اليابسة، والسمكة في الماء."
+            },
+            {
+              "id": "p1q6",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "hammer"
+                },
+                {
+                  "icon": "apple"
+                },
+                {
+                  "icon": "screwdriver"
+                },
+                {
+                  "icon": "saw"
+                }
+              ],
+              "answer": 1,
+              "explain": "الباقي أدوات، والتفّاحة طعام."
+            },
+            {
+              "id": "p1q7",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "car"
+                },
+                {
+                  "icon": "plane"
+                },
+                {
+                  "icon": "tree"
+                },
+                {
+                  "icon": "train"
+                }
+              ],
+              "answer": 2,
+              "explain": "الباقي وسائل انتقال، والشجرة نبات."
+            },
+            {
+              "id": "p1q8",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "eye"
+                },
+                {
+                  "icon": "ear"
+                },
+                {
+                  "icon": "nose"
+                },
+                {
+                  "icon": "shoe"
+                }
+              ],
+              "answer": 3,
+              "explain": "الباقي من أعضاء الجسم، والحذاء يُلبس."
+            },
+            {
+              "id": "p1q9",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "sun"
+                },
+                {
+                  "icon": "cup"
+                },
+                {
+                  "icon": "moon"
+                },
+                {
+                  "icon": "cloud"
+                }
+              ],
+              "answer": 1,
+              "explain": "الباقي نراه في السماء، والكوب في البيت."
+            },
+            {
+              "id": "p1q10",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "shirt"
+                },
+                {
+                  "icon": "glove"
+                },
+                {
+                  "icon": "book"
+                },
+                {
+                  "icon": "shoe"
+                }
+              ],
+              "answer": 2,
+              "explain": "الباقي يُلبس، والكتاب يُقرأ."
+            },
+            {
+              "id": "p1q11",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "apple"
+                },
+                {
+                  "icon": "leaf"
+                },
+                {
+                  "icon": "lock"
+                },
+                {
+                  "icon": "tree"
+                }
+              ],
+              "answer": 2,
+              "explain": "الباقي من النبات، والقفل مصنوع من معدن."
+            },
+            {
+              "id": "p1q12",
+              "type": "figural",
+              "prompt": "أيّ صورة لا تنتمي إلى المجموعة؟",
+              "optionShapes": [
+                {
+                  "icon": "cup"
+                },
+                {
+                  "icon": "plate"
+                },
+                {
+                  "icon": "hammer"
+                },
+                {
+                  "icon": "apple"
+                }
+              ],
+              "answer": 2,
+              "explain": "الباقي يتّصل بالطعام، والمطرقة أداة."
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -451,3 +451,5 @@ details > summary { cursor: pointer; color: var(--navy); font-size: 16px; paddin
 .linkarea { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace;
   font-size: 13px; padding: 10px 12px; border: 2px solid var(--navy-line);
   border-radius: 10px; resize: vertical; background: #fff; color: var(--ink); }
+.stim .cell.sep { border: none; background: transparent; width: 44px; }
+.options.shapes .opt .icon { width: 88px; height: 88px; }

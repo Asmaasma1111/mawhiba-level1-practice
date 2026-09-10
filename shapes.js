@@ -146,6 +146,17 @@
       }, '؟');
     }
 
+    /* صورة شيء مألوف: جزء من السؤال نفسه، لا زينة */
+    /* فاصل العلاقة :: بين الزوجين */
+    if (item.text) {
+      return tag('text', { x: C, y: C + 13, 'text-anchor': 'middle', 'font-size': 36,
+                           fill: 'var(--muted-line)', 'font-family': 'inherit' }, item.text);
+    }
+
+    if (item.icon) {
+      return (global.MW.Icons ? global.MW.Icons.inner(item.icon) : '');
+    }
+
     var out = '';
     var g = item.shape ? geom(item.shape) : null;
     var rot = (typeof item.rotate === 'number') ? item.rotate : 0;
@@ -224,7 +235,8 @@
     var items = st.items || [];
     var h = '<div class="stim row' + extra + '">';
     items.forEach(function (cell) {
-      h += '<div class="cell' + (cell && cell.blank ? ' blank' : '') + '">' + svg(cell) + '</div>';
+      var extraCls = cell && cell.blank ? ' blank' : (cell && cell.text ? ' sep' : '');
+      h += '<div class="cell' + extraCls + '">' + svg(cell) + '</div>';
     });
     return h + '</div>';
   }

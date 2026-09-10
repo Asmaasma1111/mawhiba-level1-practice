@@ -1,7 +1,7 @@
 /* sw.js — تخزين مؤقّت بسيط ليعمل التطبيق بلا إنترنت بعد أول فتح.
    يُسجَّل فقط عند التشغيل عبر https (مثل GitHub Pages)، ويُتجاهَل عند الفتح من القرص. */
 
-var CACHE = 'mawhiba-v4';
+var CACHE = 'mawhiba-v5';
 var ASSETS = [
   './', 'index.html', 'parent.html', 'styles.css',
   'data.js', 'shapes.js', 'diagrams.js', 'engine.js', 'app.js', 'parent.js',

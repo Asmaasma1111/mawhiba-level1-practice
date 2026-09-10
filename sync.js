@@ -13,10 +13,41 @@
   /* حروف بلا التباس: بلا 0 O 1 I L */
   var ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 
-  function cfg() {
+  var BACKEND_KEY = 'mawhiba.supabase.v1';
+
+  /* الإعداد يأتي من المتصفّح أولاً ثم من الملف.
+     هكذا لا يحتاج تفعيل المزامنة إلى تعديل الشيفرة، ولا يدخل المفتاح
+     إلى مستودع عامّ إطلاقاً. */
+  function getBackend() {
+    try {
+      var raw = localStorage.getItem(BACKEND_KEY);
+      if (raw) {
+        var o = JSON.parse(raw);
+        if (o && o.url && o.anonKey) return o;
+      }
+    } catch (e) {}
     var c = global.MW_SYNC_CONFIG || {};
-    return (c.url && c.anonKey) ? c : null;
+    return (c.url && c.anonKey) ? { url: c.url, anonKey: c.anonKey } : null;
   }
+
+  function setBackend(url, anonKey) {
+    url = String(url || '').trim().replace(/\/+$/, '');
+    anonKey = String(anonKey || '').trim();
+    if (!/^https:\/\/[a-z0-9-]+\.supabase\.(co|in)$/i.test(url)) {
+      throw new Error('العنوان يجب أن يكون بالشكل https://xxxx.supabase.co');
+    }
+    if (anonKey.length < 30) throw new Error('المفتاح يبدو ناقصاً.');
+    if (/service_role/.test(anonKey)) {
+      throw new Error('هذا مفتاح service_role — لا تستعمليه هنا. المطلوب anon / publishable.');
+    }
+    try { localStorage.setItem(BACKEND_KEY, JSON.stringify({ url: url, anonKey: anonKey })); }
+    catch (e) { throw new Error('تعذّر الحفظ في هذا المتصفّح.'); }
+    return true;
+  }
+
+  function clearBackend() { try { localStorage.removeItem(BACKEND_KEY); } catch (e) {} }
+
+  function cfg() { return getBackend(); }
 
   function generateCode() {
     var out = '';
@@ -137,8 +168,46 @@
     } catch (e) { return Promise.resolve({ failed: true }); }
   }
 
+  /* رابط إعداد لجهاز ثانٍ. المعلومات في جزء التجزئة (#) فلا تُرسل إلى أيّ خادم. */
+  function makeSetupLink() {
+    var b = getBackend();
+    if (!b) throw new Error('لا يوجد إعداد لنسخه.');
+    var payload = { u: b.url, k: b.anonKey, c: getCode() || '' };
+    var json = JSON.stringify(payload);
+    /* base64 آمن داخل الروابط: بلا + و / و = */
+    var b64 = btoa(unescape(encodeURIComponent(json)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    var base = location.href.split('#')[0].replace(/parent\.html$/, 'parent.html');
+    return base + '#setup=' + b64;
+  }
+
+  /* يقرأ رابط الإعداد عند فتح الصفحة ويطبّقه مرّة واحدة */
+  function consumeSetupLink() {
+    var m = /[#&]setup=([A-Za-z0-9_-]+)/.exec(location.hash || '');
+    if (!m) return null;
+    try {
+      var b = m[1].replace(/-/g, '+').replace(/_/g, '/');
+      while (b.length % 4) b += '=';                 /* إعادة الحشو قبل فكّ الترميز */
+      var json = decodeURIComponent(escape(atob(b)));
+      var o = JSON.parse(json);
+      setBackend(o.u, o.k);
+      if (o.c) setCode(o.c);
+      history.replaceState(null, '', location.pathname + location.search);
+      return { url: o.u, code: o.c || '' };
+    } catch (e) {
+      history.replaceState(null, '', location.pathname + location.search);
+      /* نُبقي السبب الحقيقي: «مفتاح service_role» يختلف عن «رابط تالف» */
+      throw new Error('رابط الإعداد لم يُقبل — ' + (e && e.message ? e.message : 'رابط تالف.'));
+    }
+  }
+
   MW.Sync = {
     configured: function () { return !!cfg(); },
+    getBackend: getBackend,
+    setBackend: setBackend,
+    clearBackend: clearBackend,
+    makeSetupLink: makeSetupLink,
+    consumeSetupLink: consumeSetupLink,
     generateCode: generateCode,
     getCode: getCode,
     setCode: setCode,

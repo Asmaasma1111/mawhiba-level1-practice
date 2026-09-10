@@ -36,10 +36,30 @@
       <h2>المزامنة بين الأجهزة</h2>
 
       <div id="sync-off" hidden>
-        <p>المزامنة غير مُفعّلة في هذه النسخة. التقدّم محفوظ على هذا الجهاز فقط.</p>
-        <p class="subtle">لتفعيلها: أنشئي مشروع Supabase مجّانياً، شغّلي ملف
-          <code>supabase/sync-setup.sql</code>، ثم ضعي العنوان والمفتاح العلني في
-          <code>sync-config.js</code>.</p>
+        <p>المزامنة غير مُفعّلة على هذا الجهاز. التقدّم محفوظ هنا فقط.</p>
+        <ol class="steps">
+          <li>أنشئي مشروعاً مجّانياً على <b>supabase.com</b> (مشروعاً مستقلاً لهذا التطبيق).</li>
+          <li>في المشروع: <b>SQL Editor → New query</b>، الصقي محتوى الملف
+              <code>supabase/sync-setup.sql</code> ثم <b>Run</b>.</li>
+          <li>من <b>Project Settings → API</b> انسخي <b>Project URL</b> و <b>anon public key</b>،
+              والصقيهما هنا.</li>
+        </ol>
+        <label class="field">
+          <span>Project URL</span>
+          <input type="text" id="be-url" dir="ltr" autocomplete="off" spellcheck="false"
+                 placeholder="https://xxxxxxxx.supabase.co">
+        </label>
+        <label class="field">
+          <span>anon public key</span>
+          <input type="text" id="be-key" dir="ltr" autocomplete="off" spellcheck="false"
+                 placeholder="eyJ… أو sb_publishable_…">
+        </label>
+        <div class="row-btns">
+          <button class="btn primary sm" id="be-save">فعّلي المزامنة</button>
+        </div>
+        <p class="sync-msg" id="be-msg" hidden></p>
+        <p class="subtle">يُحفظ هذان السطران في هذا المتصفّح وحده. لا يدخلان المستودع العلني،
+           ولا يُرسلان إلى أيّ جهة. لا تضعي هنا مفتاح <code>service_role</code> أبداً.</p>
       </div>
 
       <div id="sync-on" hidden>
@@ -58,8 +78,14 @@
           <p class="subtle" id="sync-last"></p>
           <div class="row-btns">
             <button class="btn primary sm" id="sync-now">زامني الآن</button>
+            <button class="btn ghost sm" id="sync-link">انسخي رابط إعداد الجهاز الآخر</button>
             <button class="btn ghost sm" id="sync-change">استعملي رمزاً آخر</button>
             <button class="btn danger sm" id="sync-off-btn">أوقفي المزامنة هنا</button>
+          </div>
+          <div id="link-box" hidden>
+            <p class="subtle">افتحي هذا الرابط مرّة واحدة على الجهاز الآخر فيُضبط وحده.
+               عامليه كسرّ: من يفتحه يرى نتائج ابنتك.</p>
+            <textarea id="setup-link" readonly dir="ltr" rows="3" class="linkarea"></textarea>
           </div>
         </div>
 

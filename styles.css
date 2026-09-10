@@ -446,3 +446,8 @@ details > summary { cursor: pointer; color: var(--navy); font-size: 16px; paddin
 .stim.diagram { display: block; margin: 0 auto 22px; max-width: 560px; }
 .stim.diagram .diagram-svg { width: 100%; height: auto; display: block; }
 .stim.small.diagram { max-width: 260px; margin: 0 0 12px; }
+.steps { padding-inline-start: 20px; margin: 10px 0 18px; }
+.steps li { margin-bottom: 8px; }
+.linkarea { width: 100%; font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px; padding: 10px 12px; border: 2px solid var(--navy-line);
+  border-radius: 10px; resize: vertical; background: #fff; color: var(--ink); }

@@ -13,7 +13,12 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    /* رابط إعداد قادم من جهاز آخر يُطبَّق قبل أيّ شيء */
+    var fromLink = null;
+    try { fromLink = Sync && Sync.consumeSetupLink(); }
+    catch (e) { setTimeout(function () { syncMsg(e.message, 'bad'); }, 0); }
     wireSync();
+    if (fromLink) syncMsg('طُبِّق إعداد المزامنة من الرابط.', 'good');
     Data.load().then(function (ok) {
       if (!ok) {
         $('#need-data').hidden = false;
@@ -41,6 +46,8 @@
     $('#sync-on').hidden = !configured;
     if (!configured) return;
 
+    var lb = $('#link-box');
+    if (lb) lb.hidden = true;
     var code = Sync.getCode();
     $('#sync-nocode').hidden = !!code;
     $('#sync-hascode').hidden = !code;
@@ -80,7 +87,48 @@
 
   function wireSync() {
     paintSync();
-    if (!Sync || !Sync.configured()) return;
+    if (!Sync) return;
+
+    /* نموذج إدخال إعداد Supabase — يعمل حتى قبل تفعيل المزامنة */
+    var save = $('#be-save');
+    if (save) {
+      save.onclick = function () {
+        var m = $('#be-msg');
+        try {
+          Sync.setBackend($('#be-url').value, $('#be-key').value);
+        } catch (e) {
+          m.hidden = false; m.textContent = e.message; m.className = 'sync-msg bad'; return;
+        }
+        m.hidden = false;
+        m.textContent = 'تم. جارٍ إنشاء رمز مزامنة والتحقّق من الاتصال…';
+        m.className = 'sync-msg working';
+        Sync.setCode(Sync.generateCode());
+        Sync.run().then(function () {
+          paintSync();
+          wireSync();
+          syncMsg('المزامنة تعمل. انسخي رابط إعداد الجهاز الآخر من الزرّ أدناه.', 'good');
+        }).catch(function (err) {
+          paintSync();
+          m.hidden = false;
+          m.textContent = 'حُفظ الإعداد لكن الاتصال فشل: ' + err.message +
+                          ' — تأكّدي من تشغيل ملف sync-setup.sql في المشروع.';
+          m.className = 'sync-msg bad';
+        });
+      };
+    }
+
+    if (!Sync.configured()) return;
+
+    var linkBtn = $('#sync-link');
+    if (linkBtn) {
+      linkBtn.onclick = function () {
+        try {
+          $('#setup-link').value = Sync.makeSetupLink();
+          $('#link-box').hidden = false;
+          $('#setup-link').select();
+        } catch (e) { syncMsg(e.message, 'bad'); }
+      };
+    }
 
     $('#sync-new').onclick = function () {
       Sync.setCode(Sync.generateCode());
@@ -109,8 +157,10 @@
     $('#sync-off-btn').onclick = function () {
       if (!confirm('إيقاف المزامنة على هذا الجهاز؟ المحاولات المحفوظة هنا لن تُمسح.')) return;
       Sync.clearCode();
+      Sync.clearBackend();
       paintSync();
-      syncMsg('أُوقفت المزامنة على هذا الجهاز.', '');
+      wireSync();
+      syncMsg('أُوقفت المزامنة على هذا الجهاز وحُذف الإعداد منه.', '');
     };
   }
 
